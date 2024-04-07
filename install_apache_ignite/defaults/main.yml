@@ -1,0 +1,20 @@
+---
+# defaults file for install_apache_ignite
+
+# Variables for downloading and unpacking Ignite
+ignite_distr_name: "apache-ignite-{{ ignite_version }}-bin"
+ignite_bin_url: "https://dlcdn.apache.org/ignite/{{ ignite_version }}/{{ ignite_distr_name }}.zip"
+ignite_sha512_url: "{{ ignite_bin_url }}.sha512"
+
+# Ignite dirs
+ignite_dir: "/opt/ignite"
+
+ignite_distr_dir: "{{ ignite_dir }}/distr"
+ignite_tmp_dir: "{{ ignite_distr_dir }}/tmp"
+
+ignite_home_dir: "{{ ignite_dir }}/server"
+ignite_bin_dir: "{{ ignite_home_dir }}/bin"
+ignite_config_dir: "{{ ignite_home_dir }}/config"
+ignite_libs_dir: "{{ ignite_home_dir }}/libs"
+ignite_user_libs_dir: "{{ ignite_home_dir }}/user_libs"
+ignite_logs_dir: "{{ ignite_dir }}/logs"

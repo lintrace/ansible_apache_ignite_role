@@ -1,0 +1,19 @@
+---
+# vars file for install_apache_ignite
+
+# Desired ignite version
+ignite_version: "2.16.0"
+
+# Owner and group on remote server for ignite dirs
+# also you can add these variables into inventory
+#ignite_owner: <your_owner>
+#ignite_group: <your_group>
+
+# True if you want to delete logs dir before install
+ignite_delete_logs_before_install: True
+########################################################
+ignite_persistence_enabled: "false"
+ignite_create_test_cache: False
+ignite_use_calcite: True
+ignite_use_rest: True
+########################################################

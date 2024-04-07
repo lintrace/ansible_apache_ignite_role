@@ -1,0 +1,7 @@
+---
+# handlers file for install_apache_ignite
+
+- name: Kill ignite process on Linux server
+  ansible.builtin.shell:
+    cmd: "kill {{ item }}"
+  loop: "{{ ignite_pids.stdout_lines }}"

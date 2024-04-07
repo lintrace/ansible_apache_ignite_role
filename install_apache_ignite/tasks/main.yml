@@ -1,0 +1,151 @@
+---
+# tasks file for install_apache_ignite
+- name: Request ignite pids from remote Linux server
+  ansible.builtin.shell:
+    cmd: "ps a | grep [i]gnite.sh | sed -e 's/^[ \t]*//' | cut -d ' ' -f1"
+  register: ignite_pids
+  notify:
+    - Kill ignite process on Linux server
+
+- name: Delete ignite dirs
+  become: yes
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "{{ ignite_tmp_dir }}"
+    - "{{ ignite_bin_dir }}"
+    - "{{ ignite_libs_dir }}"
+
+- name: Delete logs before install
+  become: yes
+  ansible.builtin.file:
+    path: "{{ ignite_logs_dir }}"
+    state: absent
+  when: ignite_delete_logs_before_install == True
+
+- name: Create ignite dirs
+  become: yes
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+    owner: "{{ ignite_owner}}"
+    group: "{{ ignite_group }}"
+  loop:
+    - "{{ ignite_distr_dir }}"
+    - "{{ ignite_tmp_dir }}"
+    - "{{ ignite_bin_dir}}"
+    - "{{ ignite_config_dir }}"
+    - "{{ ignite_libs_dir }}"
+    - "{{ ignite_user_libs_dir }}"
+    - "{{ ignite_logs_dir }}"
+
+- name: Download Apache Ignite distr
+  become: yes
+  ansible.builtin.get_url:
+    url: "{{ ignite_bin_url }}"
+    dest: "{{ ignite_distr_dir }}"
+    checksum: "sha512:{{ ignite_sha512_url }}"
+    owner: "{{ ignite_owner}}"
+    group: "{{ ignite_group }}"
+    mode: 0644
+
+- name: Unarchive distr
+  become: yes
+  ansible.builtin.unarchive:
+    src: "{{ ignite_distr_dir }}/{{ ignite_distr_name }}.zip"
+    dest: "{{ ignite_tmp_dir }}"
+    owner: "{{ ignite_owner}}"
+    group: "{{ ignite_group }}"
+    remote_src: True
+
+- name: Copy bin dir from distr
+  become: true
+  ansible.builtin.copy:
+    src: "{{ ignite_tmp_dir }}/{{ ignite_distr_name }}/bin/"
+    dest: "{{ ignite_bin_dir }}"
+    owner: "{{ ignite_owner}}"
+    group: "{{ ignite_group }}"
+    remote_src: True
+
+- name: Copy libs dir from distr
+  become: yes
+  ansible.builtin.copy:
+    src: "{{ ignite_tmp_dir }}/{{ ignite_distr_name }}/libs/"
+    dest: "{{ ignite_libs_dir }}"
+    owner: "{{ ignite_owner}}"
+    group: "{{ ignite_group }}"
+    remote_src: True
+
+- name: Copy config dir from distr
+  become: yes
+  ansible.builtin.copy:
+    src: "{{ ignite_tmp_dir }}/{{ ignite_distr_name }}/config/"
+    dest: "{{ ignite_config_dir }}"
+    owner: "{{ ignite_owner}}"
+    group: "{{ ignite_group }}"
+    remote_src: True
+
+- name: Generate customIgniteConfiguration
+  become: yes
+  ansible.builtin.template:
+    src: customIgniteConfiguration.xml.j2
+    dest: "{{ ignite_config_dir }}/customIgniteConfiguration.xml"
+    owner: "{{ ignite_owner}}"
+    group: "{{ ignite_group }}"
+    mode: 0644
+    backup: True
+
+- name: Generate ignite-log4j2.xml
+  become: yes
+  ansible.builtin.template:
+    src: ignite-log4j2.xml.j2
+    dest: "{{ ignite_config_dir }}/ignite-log4j2.xml"
+    mode: 0644
+    owner: "{{ ignite_owner}}"
+    group: "{{ ignite_group }}"
+    backup: True
+
+- name: Generate startServer.sh
+  become: yes
+  ansible.builtin.template:
+    src: startServer.sh.j2
+    dest: "{{ ignite_bin_dir }}/startServer.sh"
+    owner: "{{ ignite_owner}}"
+    group: "{{ ignite_group }}"
+    mode: 0755
+
+- name: Enable REST for ignite
+  become: yes
+  ansible.builtin.copy:
+    src: "{{ ignite_libs_dir}}/optional/ignite-rest-http"
+    dest: "{{ ignite_libs_dir }}/"
+    remote_src: True
+  when: ignite_use_rest == True
+
+- name: Enable CALCITE for ignite
+  become: yes
+  ansible.builtin.copy:
+    src: "{{ ignite_libs_dir }}/optional/ignite-calcite"
+    dest: "{{ ignite_libs_dir }}"
+    remote_src: True
+  when: ignite_use_calcite == True
+
+- name: Enable ignite-log4j2
+  become: yes
+  ansible.builtin.copy:
+    src: "{{ ignite_libs_dir }}/optional/ignite-log4j2"
+    dest: "{{ ignite_libs_dir }}"
+    remote_src: True
+
+- name: Delete tmp dir
+  become: yes
+  ansible.builtin.shell:
+    cmd: "rm -rf {{ ignite_tmp_dir }}"
+
+- name: Delete unused *.bat files on a Linux system
+  become: yes
+  ansible.builtin.shell:
+    cmd: "rm {{ ignite_bin_dir}}/*.bat"
+  when: ansible_system == "Linux"
