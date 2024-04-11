@@ -1,0 +1,12 @@
+---
+
+- name: Delete tmp dir
+  become: yes
+  ansible.builtin.shell:
+    cmd: "rm -rf {{ ignite_tmp_dir }}"
+
+- name: Delete unused *.bat files on a Linux system
+  become: yes
+  ansible.builtin.shell:
+    cmd: "rm {{ ignite_bin_dir}}/*.bat"
+  when: ansible_system == "Linux"

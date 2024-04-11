@@ -1,0 +1,18 @@
+---
+- name: Delete ignite dirs
+  become: yes
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "{{ ignite_tmp_dir }}"
+    - "{{ ignite_bin_dir }}"
+    - "{{ ignite_libs_dir }}"
+
+- name: Delete logs before install
+  become: yes
+  ansible.builtin.file:
+    path: "{{ ignite_logs_dir }}"
+    state: absent
+  when: ignite_delete_logs_before_install == True
+

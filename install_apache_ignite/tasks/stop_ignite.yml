@@ -1,0 +1,11 @@
+---
+- name: Request ignite pids from remote Linux server
+  ansible.builtin.shell:
+    cmd: "ps a | grep [i]gnite.sh | sed -e 's/^[ \t]*//' | cut -d ' ' -f1"
+  register: ignite_pids
+
+- name: Kill ignite process on Linux server
+  ansible.builtin.shell:
+    cmd: "kill {{ item }}"
+  loop: "{{ ignite_pids.stdout_lines }}"
+  when: ignite_pids.stdout_lines != []
