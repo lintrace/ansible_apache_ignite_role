@@ -1,4 +1,20 @@
 #!/bin/sh
 
-{{ ignite_bin_dir }}/ignite.sh {{ ignite_config_dir }}/customIgniteConfiguration.xml 1>{{ ignite_logs_dir }}/console.out 2>{{ ignite_logs_dir }}/console.err &
+# Delete the old pid file if the ignite process was interrupted directly
+rm "{{ ignite_pid_file }}"
 
+# Asynchronous launch of ignite
+"{{ ignite_bin_dir }}"/ignite.sh "{{ ignite_config_dir }}"/customIgniteConfiguration.xml 1>"{{ ignite_logs_dir }}"/console.out 2>"{{ ignite_logs_dir }}"/console.err &
+
+# Create pid file for the started process
+for counter in {0..15}
+do
+    sleep 1 # Wait 1 second and searching ignite process
+    ignite_pid=$(ps aux | grep "[j]ava.*{{ignite_bin_dir}}/ignite.sh" | awk '{ print $2 }')
+    if [ -n "$ignite_pid" ]
+    then
+        echo $ignite_pid > "{{ ignite_pid_file }}"
+        echo "Ignite PID=${ignite_pid}"
+        break
+    fi
+done

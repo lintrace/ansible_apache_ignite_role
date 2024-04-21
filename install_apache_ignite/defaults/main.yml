@@ -18,3 +18,5 @@ ignite_config_dir: "{{ ignite_home_dir }}/config"
 ignite_libs_dir: "{{ ignite_home_dir }}/libs"
 ignite_user_libs_dir: "{{ ignite_home_dir }}/user_libs"
 ignite_logs_dir: "{{ ignite_dir }}/logs"
+
+ignite_pid_file: "{{ ignite_logs_dir }}/ignite.pid"
