@@ -1,0 +1,37 @@
+#!/bin/bash
+
+if [ -e "{{ ignite_pid_file }}" ]; then
+    ignite_pid=$(cat "{{ ignite_pid_file }}")
+else
+    echo "The Ignite pid file does not exist..."
+    ignite_pid=$(ps aux | grep "[j]ava.*{{ignite_bin_dir}}/ignite.sh" | awk '{ print $2 }')
+    if [ -n "${ignite_pid}" ]; then 
+        echo "Ignite process found, PID=${ignite_pid}"
+    else
+        echo "Ignite is not running!"
+        exit
+    fi
+fi
+
+# Deleting the pid file for a non-existent process
+ps -p "${ignite_pid}" 1>/dev/null
+if [ $? -gt 0 ]; then
+    echo "Process with PID=${ignite_pid} from pid file does not exist!"
+    if [ -e "{{ ignite_pid_file }}" ]; then rm "{{ ignite_pid_file }}"; fi
+    exit
+fi
+
+kill "${ignite_pid}"
+
+echo -n "Wait to stop"
+for counter in {1..10}; do
+    sleep 1
+    ps -p "${ignite_pid}" 1>/dev/null
+    if [ $? -gt 0 ]; then break; fi
+    # Send SIGKILL if ignite is not stopped after 10 sec
+    if [ "$counter" -eq 10 ]; then kill -SIGKILL "${ignite_pid}"; fi
+    echo -n " ..${counter}"
+done
+
+rm "{{ ignite_pid_file }}"
+echo -e "\nIgnite (PID=${ignite_pid}) is stopped"

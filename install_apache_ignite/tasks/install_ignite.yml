@@ -75,6 +75,15 @@
     group: "{{ ignite_group }}"
     mode: 0755
 
+- name: Generate stopServer.sh
+  become: yes
+  ansible.builtin.template:
+    src: stopServer.sh.j2
+    dest: "{{ ignite_bin_dir }}/stopServer.sh"
+    owner: "{{ ignite_owner}}"
+    group: "{{ ignite_group }}"
+    mode: 0755
+
 - name: Enable REST API for ignite
   become: yes
   ansible.builtin.copy:
