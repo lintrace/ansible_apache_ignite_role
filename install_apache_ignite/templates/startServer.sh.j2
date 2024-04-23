@@ -1,8 +1,18 @@
 #!/bin/bash
 
-if [ -e "{{ ignite_pid_file }}" ]
-then
-    echo "Ignite is already running on this server!"
+# Usage:
+#   get_ignite_pid [variable]
+#   when variable receive returned PID of ignite process
+#   where "" - is not startd, othervise is valid PID value
+get_ignite_pid() {
+    eval $1=$(ps aux | grep "[j]ava.*{{ignite_bin_dir}}/ignite.sh" | awk '{ print $2 }')
+}
+
+# Check for an already running ignite
+get_ignite_pid ignite_pid
+if [ -n "${ignite_pid}" ]; then 
+    echo "$ignite_pid" > "{{ ignite_pid_file }}"
+    echo "Ignite is already running on this server with PID=${ignite_pid}!"
     exit
 fi
 
@@ -14,7 +24,7 @@ echo -n "Wait to start"
 for counter in {1..15}
 do
     sleep 1 # Wait 1 second and searching ignite process
-    ignite_pid=$(ps aux | grep "[j]ava.*{{ignite_bin_dir}}/ignite.sh" | awk '{ print $2 }')
+    get_ignite_pid ignite_pid
     if [ -n "$ignite_pid" ]
     then
         echo "$ignite_pid" > "{{ ignite_pid_file }}"
