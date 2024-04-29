@@ -1,5 +1,7 @@
 ---
 # tasks file for install_apache_ignite
+- include_tasks: Create user and group for Ignite
+
 - include_tasks: stop_ignite.yml
 
 - include_tasks: delete_ignite_before_install.yml

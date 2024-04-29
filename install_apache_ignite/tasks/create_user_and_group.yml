@@ -1,0 +1,10 @@
+---
+- name: Create user and group for Ignite
+  become: true
+  ansible.builtin.user:
+    name: "{{ ignite_owner }}"
+    group: "{{ ignite_group }}"
+    groups: ""
+    append: false
+    password: "!"
+    state: present
