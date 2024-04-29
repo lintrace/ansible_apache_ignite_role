@@ -1,0 +1,7 @@
+[Unit]
+Description=Apache Ignite server
+After=network.target
+Requires=network.target
+
+[Service]
+
