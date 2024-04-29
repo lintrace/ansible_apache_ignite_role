@@ -17,5 +17,6 @@ ignite_create_test_cache: False
 ignite_use_calcite: True
 ignite_use_rest: True
 
-ignite_run_as_systemd_service: True
+# Make systemd unit for run Ignite as service (ignite-server.service)
+ignite_run_as_service: True
 ########################################################

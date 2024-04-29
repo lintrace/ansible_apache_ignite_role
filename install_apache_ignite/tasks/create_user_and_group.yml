@@ -1,5 +1,11 @@
 ---
-- name: Create user and group for Ignite
+- name: Create group for Ignite
+  become: true
+  ansible.builtin.group:
+    name: "{{ ignite_group }}"
+    state: present
+
+- name: Create user for Ignite
   become: true
   ansible.builtin.user:
     name: "{{ ignite_owner }}"
@@ -7,4 +13,5 @@
     groups: ""
     append: false
     password: "!"
+    expires: -1
     state: present

@@ -107,3 +107,10 @@
     dest: "{{ ignite_libs_dir }}"
     remote_src: True
 
+- name: Generate systemd Ignite service
+  become: yes
+  ansible.builtin.template:
+    src: ignite-server.service.j2
+    dest: "/etc/systemd/system/ignite-server.service"
+    mode: 0644
+  when: ignite_run_as_service == True
