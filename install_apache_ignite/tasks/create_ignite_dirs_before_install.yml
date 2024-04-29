@@ -5,7 +5,7 @@
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
-    mode: 0755
+    mode: 0750
     owner: "{{ ignite_owner}}"
     group: "{{ ignite_group }}"
   loop:
@@ -15,4 +15,12 @@
     - "{{ ignite_config_dir }}"
     - "{{ ignite_libs_dir }}"
     - "{{ ignite_user_libs_dir }}"
-    - "{{ ignite_logs_dir }}"
+
+- name: Create log dir with read access for all
+  become: yes
+  ansible.builtin.file:
+    path: "{{ ignite_logs_dir }}"
+    state: directory
+    mode: 0755
+    owner: "{{ ignite_owner}}"
+    group: "{{ ignite_group }}"

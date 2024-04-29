@@ -1,0 +1,17 @@
+[Unit]
+Description=Apache Ignite server
+After=network.target
+Requires=network.target
+
+[Service]
+Type=forking
+PIDFile={{ ignite_pid_file }}
+WorkingDirectory={{ ignite_bin_dir }}
+
+User={{ ignite_owner }}
+Group={{ ignite_group }}
+
+ExecStart={{ ignite_bin_dir }}/startServer.sh
+ExecStop={{ ignite_bin_dir }}/stopServer.sh
+
+TimeoutSec=30
