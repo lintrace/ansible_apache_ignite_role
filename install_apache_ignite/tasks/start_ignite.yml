@@ -1,0 +1,13 @@
+---
+- name: Start Ignite as service
+  become: true
+  ansible.builtin.systemd:
+    name: "{{ignite_unit_file_name}}"
+    state: started
+  when: ignite_run_as_service is defined and ignite_run_as_service == True and ignite_start_after_install is defined and ignite_start_after_install == True
+
+- name: Start Ignite from shell script
+  become: true
+  ansible.builtin.shell:
+    cmd: "{{ ignite_bin_dir }}/startServer.sh"
+  when: ignite_start_after_install is defined and ignite_start_after_install == True and ignite_run_as_service is defined and ignite_run_as_service == False

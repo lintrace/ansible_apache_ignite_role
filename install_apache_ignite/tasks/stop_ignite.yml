@@ -1,4 +1,11 @@
 ---
+- name: Stop Ignite systemd service if present
+  become: yes
+  ansible.builtin.systemd:
+    name: "{{ ignite_unit_file_name }}"
+    state: stopped
+    enabled: False
+
 - name: Request ignite pids from remote Linux server
   ansible.builtin.shell:
     cmd: "ps a | grep [i]gnite.sh | sed -e 's/^[ \t]*//' | cut -d ' ' -f1"
