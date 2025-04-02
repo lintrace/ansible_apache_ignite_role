@@ -111,6 +111,14 @@
   become: yes
   ansible.builtin.template:
     src: ignite-server.service.j2
-    dest: "/etc/systemd/system/ignite-server.service"
+    dest: "/etc/systemd/system/{{ ignite_unit_file_name }}"
     mode: 0644
   when: ignite_run_as_service == True
+
+- name: Enable systemd Ignite service
+  become: yes
+  ansible.builtin.systemd:
+    name: "{{ ignite_unit_file_name }}"
+    enabled: True
+    force: True
+  when: ignite_run_as_service == True and ignite_enable_systemd_service == True

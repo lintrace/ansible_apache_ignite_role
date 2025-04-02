@@ -33,11 +33,17 @@
         </bean>
     </property>
 
+{% if ignite_print_metrics_in_log is defined and ignite_print_metrics_in_log == False %}
+    <!-- Do not print metrics to log file -->
+    <property name="metricsLogFrequency" value="0"/>
+{% endif %}
+
     <property name="dataStorageConfiguration">
         <bean class="org.apache.ignite.configuration.DataStorageConfiguration">
             <property name="defaultDataRegionConfiguration">
                 <bean class="org.apache.ignite.configuration.DataRegionConfiguration">
                     <property name="persistenceEnabled" value="{{ ignite_persistence_enabled }}"/>
+                    <property name="metricsEnabled" value="true"/>
                 </bean>
             </property>
         </bean>
