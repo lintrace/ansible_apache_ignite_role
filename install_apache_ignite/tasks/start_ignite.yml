@@ -2,7 +2,7 @@
 - name: Start Ignite as service
   become: true
   ansible.builtin.systemd:
-    name: "{{ignite_unit_file_name}}"
+    name: "{{ignite_systemd_unit_name}}"
     state: started
   when: ignite_run_as_service is defined and ignite_run_as_service == True and ignite_start_after_install is defined and ignite_start_after_install == True
 

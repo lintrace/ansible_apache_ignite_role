@@ -2,7 +2,7 @@
 - name: Stop Ignite systemd service if present
   become: yes
   ansible.builtin.systemd:
-    name: "{{ ignite_unit_file_name }}"
+    name: "{{ ignite_systemd_unit_name }}"
     state: stopped
     enabled: False
 
