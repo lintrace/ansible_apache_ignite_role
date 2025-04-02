@@ -12,3 +12,4 @@
 
 - include_tasks: clean_after_install.yml
 
+- include_tasks: start_ignite.yml
