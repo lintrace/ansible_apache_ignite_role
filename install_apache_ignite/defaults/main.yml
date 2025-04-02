@@ -7,7 +7,7 @@ ignite_bin_url: "https://dlcdn.apache.org/ignite/{{ ignite_version }}/{{ ignite_
 ignite_sha512_url: "{{ ignite_bin_url }}.sha512"
 
 # Ignite systemd unit file name
-ignite_unit_file_name: "ignite-server.service"
+ignite_systemd_unit_name: "ignite-server.service"
 
 # Ignite dirs
 ignite_dir: "/opt/ignite"
