@@ -1,0 +1,23 @@
+---
+
+- name: Check Apache Ignite URL
+  uri:
+    url: "{{ ignite_bin_url }}"
+    method: HEAD
+  register: ignite_url_status_check
+  ignore_errors: yes
+
+- name: Status check of URL and go to next play if status is 200
+  meta: end_play
+  when: ignite_url_status_check.status == 200
+
+- name: It is possible that the requested version of Apache Ignite is not the latest and has been moved to the archive.
+  set_fact:
+    ignite_bin_url: "https://archive.apache.org/dist/ignite/{{ ignite_version }}/{{ ignite_distr_name }}.zip"
+    ignite_sha512_url: "{{ ignite_bin_url }}.sha512"
+
+- name: Check new Apache Ignite URL
+  uri:
+    url: "{{ ignite_bin_url }}"
+    method: HEAD
+    status_code: 200
